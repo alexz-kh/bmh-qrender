@@ -1,0 +1,55 @@
+##### Master nodes
+{%- for n, value in cookiecutter.nodes.master.items() %}
+---
+apiVersion: "cluster.k8s.io/v1alpha1"
+kind: Machine
+metadata:
+  name: machine-master-{{n}}
+  generateName: baremetal-machine-
+  annotations:
+    kaas.mirantis.com/lcm: "true"
+    openstack-floating-ip-address: {{ value.dhcp_ip }}
+  labels:
+    set: master
+    cluster.k8s.io/cluster-name: {{ cookiecutter.cluster.name }}
+spec:
+  versions: {{ cookiecutter.versions.master }}
+  providerSpec:
+    value:
+      apiVersion: "baremetal.cluster.k8s.io/v1alpha1"
+      kind: "BareMetalMachineProviderSpec"
+      hostSelector:
+        matchLabels:
+          baremetal: baremetal-master-{{n}}
+      image:
+        url: http://{{ cookiecutter.pxe.provisioning_ip }}/images/ubuntu.qcow2
+        checksum: http://{{ cookiecutter.pxe.provisioning_ip }}/images/ubuntu.qcow2.md5sum
+{%- endfor %}
+
+##### Worker nodes
+{%- for n, value in cookiecutter.nodes.worker.items() %}
+---
+apiVersion: "cluster.k8s.io/v1alpha1"
+kind: Machine
+metadata:
+  name: machine-worker-{{n}}
+  generateName: baremetal-machine-
+  annotations:
+    kaas.mirantis.com/lcm: "true"
+    openstack-floating-ip-address: {{ value.dhcp_ip }}
+  labels:
+    set: node
+    cluster.k8s.io/cluster-name: {{ cookiecutter.cluster.name }}
+spec:
+  versions: {{ cookiecutter.versions.worker }}
+  providerSpec:
+    value:
+      apiVersion: "baremetal.cluster.k8s.io/v1alpha1"
+      kind: "BareMetalMachineProviderSpec"
+      hostSelector:
+        matchLabels:
+          baremetal: baremetal-worker-{{n}}
+      image:
+        url: http://{{ cookiecutter.pxe.provisioning_ip }}/images/ubuntu.qcow2
+        checksum: http://{{ cookiecutter.pxe.provisioning_ip }}/images/ubuntu.qcow2.md5sum
+{%- endfor %}
