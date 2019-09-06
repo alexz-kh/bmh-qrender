@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: worker-0-bmc-secret
+type: Opaque
+data:
+  username: {{ cookiecutter.nodes.master.get('bm-worker-0').ipmi.login|b64encode }}
+  password: cjAwdG1l
+---
+apiVersion: metal3.io/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: bm-worker-0
+  labels:
+    baremetal: baremetal-worker-0
+spec:
+  online: true
+  bootMACAddress: 00:3b:e5:17:03:76
+  hardwareProfile: libvirt
+  bmc:
+    address: ipmi://10.0.0.15:6230
+    credentialsName: worker-0-bmc-secret

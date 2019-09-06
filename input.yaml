@@ -1,0 +1,3 @@
+cookiecutter_json:
+  var1: val1
+# Use dafaults.yaml :)

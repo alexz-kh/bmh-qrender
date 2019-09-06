@@ -1,0 +1,46 @@
+cookiecutter_json:
+  cc_stub_1: bootstrap
+  _extensions:
+  - filters.extra.GenericGlobal
+  #
+  def_ipmi_creds: &def_ipmi_creds
+    login: admin
+    passwd: r00tme
+  # For lab purposes only
+  vbmc:
+    enabled: true
+    libvirt_ip: "10.0.0.15"
+  pxe:
+    provisioning_ip: 10.0.0.20
+    dhcp_range: "10.0.0.30,10.0.0.60"
+    provisioning_interface: veth0-docker
+    dns: "172.18.32.6,8.8.8.8"
+  metallb:
+    range: '10.0.0.61-10.0.0.70'
+  nodes:
+    master:
+      bm-worker-0:
+        ipmi:
+          << : *def_ipmi_creds
+          addr: ipmi://127.0.0.1:6230
+        bootMACAddress: 00:3b:e5:17:03:76
+        dhcp_ip: 10.0.0.22
+      bm-worker-1:
+        ipmi:
+          << : *def_ipmi_creds
+          addr: ipmi://127.0.0.1:6231
+        bootMACAddress: 00:3b:e5:e0:e7:ff
+        dhcp_ip: 10.0.0.23
+      bm-worker-2:
+        ipmi:
+          << : *def_ipmi_creds
+          addr: ipmi://127.0.0.1:6232
+        bootMACAddress: 00:3b:e5:a4:06:36
+        dhcp_ip: 10.0.0.24
+      bm-worker-3:
+        ipmi:
+          << : *def_ipmi_creds
+          addr: ipmi://127.0.0.1:6233
+        bootMACAddress: 00:6c:93:6c:a6:e1
+        dhcp_ip: 10.0.0.25
+    node:
