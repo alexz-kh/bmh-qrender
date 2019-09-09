@@ -1,0 +1,73 @@
+ironic:
+  ironic_conf:
+    provisioning_interface: "{{ cookiecutter.pxe.provisioning_interface_mgmt }}"
+    provisioning_ip: "{{ cookiecutter.nodes.master.n0.dhcp_ip }}"
+    dhcp_range: "{{ cookiecutter.pxe.dhcp_range }}"
+    dnsmasq_extra_opts:
+      - dhcp-option=option:router,{{ cookiecutter.pxe.provisioning_router }}
+      - dhcp-option=6,{{ cookiecutter.pxe.dns }}
+      - pxe-prompt="Press F8 for boot menu",5
+{%- for n, value in cookiecutter.nodes.master.items() %}
+      - dhcp-host={{ value.bootMACAddress }},{{ value.dhcp_ip }}
+{%- endfor %}
+{%- for n, value in cookiecutter.nodes.worker.items() %}
+      - dhcp-host={{ value.bootMACAddress }},{{ value.dhcp_ip }}
+{%- endfor %}
+  inspector:
+    ipxe_conf:
+      ipa_inspection_callback_url: "http://{{ cookiecutter.nodes.master.n0.dhcp_ip }}:5050/v1/continue"
+  setup_iptables_rules: False
+  override_config_for:
+    ironic: True
+    dnsmasq: True
+    httpd: True
+    mariadb: True
+    inspector: True
+  init_bootstrap:
+    enabled: True
+{%- if cookiecutter.get('vbmc', {}).enabled %}
+virtualbmc:
+  enabled: true
+  image: ryazanov/vbmc:latest
+  libvirt:
+    ip: 10.0.0.15
+    user: root
+    # Temp private key from any virtlab. Always different, nothing to steal ;)
+    private_key: |-
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEpAIBAAKCAQEAtCF9eI6cvSjrl/9Fc763M5Mw/PT/F2jUnrKVJ3HEscu5k62k
+      JrjBBwhMbQy9NIcRN1OvJn0ELF++nVVXR689I3R3aWDFiwf0+WiWxCy/7nFOYLWn
+      msayukXsrcapBvevl9mx8cAUbiNeCeJX/Y4h06ocgdR4J7ZWZIo41B7steZ0x+KU
+      acMCsDt2d2Z8zz6C90oOQfurU0mMUOAObZy6oHZPbaHcPRvyXAY89D3Ami9b4GAY
+      fdT9L+L9Zl/g0d8jPLNFjrSVmxNmiBqWNLYON80WNrRojrcPrOaX5zQfqiCevTyC
+      hXNhkMljfZpXQKkyIR3y2HxHWWIUApRXlhsi/wIDAQABAoIBAHoSHBKgKu4yFf6q
+      uulmfIbSICe87EZz/2sQwO27Nr36vueqjAzFteJLKGfaczpusicZaiAeJr7fn7DF
+      zeFBi6BEZEwgjZ7bpJOE4m9NmEBBvwjg8hV8xFBh5LQbZh7XqcKxf9rB/dZp12fB
+      YTnuoVPs+2ask0TuV3vJBBwUXPwjbzcO42qUfBLDeYjvUDrkbVIYaUBFtpP2ZrK5
+      VuH8XEh8x20plVqcTphl6QQDQvQ8gChePcFEvvBEHDUIEhO5Ws1BPRWKsLy4MDU9
+      +v3S34CF0oeBSKD+4sUT9ksgATS0u4JPQPBGwdIqqwUe63jI+AT3eEg8qq5oucdt
+      LpkQuRkCgYEA2jrtYUEosdd1MxK08tGYd7HdkxsHRKyltrtYFeZfvcGEaxbNs/TJ
+      tOn6PMfbLM63MjnLrOrr531N/imhUv4sOdQtsD82yVG7z3kHydd6TbLhOsJmimc4
+      I39eSheGSTVXsb+zQqd6qkqjvaqXnHugKDc+sgpJL/MC2mU7iOU2Mm0CgYEA006A
+      4MUalflTqnhQuAb+gQ0lFFWZCoxxPrVpeynY5JxaJbc3MVko+sSx8LnhS4WcpaR9
+      qbUrVfv5ym0NLmF5tL0HWo776J1UucptjWeAAKpVhiZbjQpiXOf5HE8QPvRvviDQ
+      S8uwjJGCcsXl0b3As18/uxkL4nZQJSg0Kj2MJ5sCgYB3erXGfm8yVx1CliZdnyVT
+      uxzt0ml7Tu73icCjVNrsQEwoeXar5QSeOVAZAO7drFuecwgxJvl7Zx5RXieGEcTS
+      8HkHOsTbGhWydLgv6Pp8Gci4bADKG9MflDdiZ1jNMhhOJ/+UKa++FllpmUGimgjI
+      m96GiZ0iVHEmczBSNfQjTQKBgQCERV/nU3qQ5sG4tBfTGo21usS7NdnXAJLi7ixZ
+      LJjYggbsFQQ3n9hHIVlBlxmwbLLh/VWsJfw6lsCGNj1KCzpkKO+xgE+wDMw8gLqT
+      CXbW88kVcG1enGF2Rr9pORSyU9Ce82twBtE9LNi7f6Wc5Wr63WTHeaY23FjO6Zu9
+      1UkmgQKBgQDRH0V4RV09I+gB1nHHS3JOJMxX+DSrbeHgZL9MjLhq3uJe8PDji6Lq
+      9uHu5IeaNXo+oiLl3dS+pAIci+woiQUJjGQqDk37MlMbkXqf/tLvaZnZK28TWEXg
+      vDbQRzeiMuyYGxfackmt37/g28Lgc6WIuAdfg0h5fUTA8l4z7WFiHg==
+      -----END RSA PRIVATE KEY-----
+  bmc:
+    user: admin
+    password: r00tme
+    base_port: 6230
+    domains:
+      - worker-0
+      - worker-1
+      - worker-2
+      - worker-3
+{% endif %}

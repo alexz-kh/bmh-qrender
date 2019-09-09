@@ -8,11 +8,7 @@ metadata:
 type: Opaque
 data:
   username: {{ value.ipmi.login|b64encode }}
-  username: {{ value.ipmi.password|b64encode }}
-type: Opaque
-data:
-  username: {{ value.ipmi.login|b64encode }}
-  password: cjAwdG1l
+  password: {{ value.ipmi.password|b64encode }}
 ---
 apiVersion: metal3.io/v1alpha1
 kind: BareMetalHost
@@ -24,6 +20,9 @@ spec:
   online: true
   bootUEFI: true
   bootMACAddress: {{ value.bootMACAddress }}
+{%- if cookiecutter.get('vbmc', {}).enabled is defined %}
+  hardwareProfile: libvirt
+{% endif %}
   bmc:
     address: {{ value.ipmi.addr }}
     credentialsName: master-{{n}}-bmc-secret
@@ -39,7 +38,7 @@ metadata:
 type: Opaque
 data:
   username: {{ value.ipmi.login|b64encode }}
-  username: {{ value.ipmi.password|b64encode }}
+  password: {{ value.ipmi.password|b64encode }}
 ---
 apiVersion: metal3.io/v1alpha1
 kind: BareMetalHost
@@ -51,10 +50,14 @@ spec:
   online: true
   bootUEFI: true
   bootMACAddress: {{ value.bootMACAddress }}
+{%- if cookiecutter.get('vbmc', {}).enabled is defined %}
+  hardwareProfile: libvirt
+{% endif %}
   bmc:
     address: {{ value.ipmi.addr }}
     credentialsName: worker-{{n}}-bmc-secret
 {%- endfor %}
+
 {#
 # vim: ft=jinja
 #}

@@ -11,17 +11,22 @@ cookiecutter_json:
     enabled: true
     libvirt_ip: "10.0.0.15"
   #
+  # WARNING: after bootstrap, migration process will be proceed to master:n0 node.
+  # That's hardcoded around.
   pxe:
+    provisioning_interface_mgmt: "ens3"
     provisioning_ip: 10.0.0.20
+    # Default gw
+    provisioning_router: 10.0.0.1
     provisioning_mask: 24
     dhcp_range: "10.0.0.30,10.0.0.60"
-    provisioning_interface: veth0-docker
     dns: "172.18.32.6,8.8.8.8"
   seed_host:
     bridge: br0
   #
   metallb:
     range: '10.0.0.61-10.0.0.70'
+    host: '10.0.0.61'
   versions:
     master:
       controlPlane: 0.3.1+1.15.0

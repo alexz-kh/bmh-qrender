@@ -1,0 +1,8 @@
+configInline:
+  address-pools:
+  - name: default
+    protocol: layer2
+    addresses:
+    - {{ cookiecutter.metallb.range }}
+  name: default
+  protocol: layer2
