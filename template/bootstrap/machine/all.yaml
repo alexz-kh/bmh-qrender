@@ -1,5 +1,5 @@
 ##### Master nodes
-{%- for n, value in cookiecutter.nodes.master.items() %}
+{%- for n, value in cookiecutter.nodes.master|dictsort() %}
 ---
 apiVersion: "cluster.k8s.io/v1alpha1"
 kind: Machine
@@ -22,12 +22,19 @@ spec:
         matchLabels:
           baremetal: baremetal-master-{{n}}
       image:
+# First node,deployed from provis.ip
+# All other - from mgmt|master node0
+  {%- if (loop.index0 < 1) %}
         url: http://{{ cookiecutter.pxe.provisioning_ip }}/images/ubuntu.qcow2
         checksum: http://{{ cookiecutter.pxe.provisioning_ip }}/images/ubuntu.qcow2.md5sum
+  {% else %}
+        url: http://{{ cookiecutter.nodes.master.n0.dhcp_ip }}/images/ubuntu.qcow2
+        checksum: http://{{ cookiecutter.nodes.master.n0.dhcp_ip }}/images/ubuntu.qcow2.md5sum
+  {%- endif -%}
 {%- endfor %}
 
 ##### Worker nodes
-{%- for n, value in cookiecutter.nodes.worker.items() %}
+{%- for n, value in cookiecutter.nodes.worker|dictsort() %}
 ---
 apiVersion: "cluster.k8s.io/v1alpha1"
 kind: Machine
@@ -50,6 +57,6 @@ spec:
         matchLabels:
           baremetal: baremetal-worker-{{n}}
       image:
-        url: http://{{ cookiecutter.pxe.provisioning_ip }}/images/ubuntu.qcow2
-        checksum: http://{{ cookiecutter.pxe.provisioning_ip }}/images/ubuntu.qcow2.md5sum
+        url: http://{{ cookiecutter.nodes.master.n0.dhcp_ip }}/images/ubuntu.qcow2
+        checksum: http://{{ cookiecutter.nodes.master.n0.dhcp_ip }}/images/ubuntu.qcow2.md5sum
 {%- endfor %}

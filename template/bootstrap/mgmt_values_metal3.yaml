@@ -1,10 +1,10 @@
 # TODO: Drop images and other odd data, after PROD-33203
 components:
-  cluster_api_controller:
-    enable: true
-    image: gcr.io/k8s-cluster-api/cluster-api-controller:latest
+# cluster_api_controller:
+#   enable: true
+#   image: gcr.io/k8s-cluster-api/cluster-api-controller:latest
   cluster_api_provider_baremetal:
-    image: docker-dev-virtual.docker.mirantis.net/mirantis/kaas-bm/cluster-api-provider-baremetal:base-bionic-20190910140320
+#    image: docker-dev-virtual.docker.mirantis.net/mirantis/kaas-bm/cluster-api-provider-baremetal:base-bionic-20190910140320
     config:
       iam:
         registrationUrl: iam-api-http.kaas:8082
@@ -24,8 +24,8 @@ components:
       url: https://artifactory.mirantis.com/binary-prod-local/mirantis/kaas-bm/efi/ubuntu/qcow2-bionic-debug-20190904095718
       checksum: https://artifactory.mirantis.com/binary-prod-local/mirantis/kaas-bm/efi/ubuntu/qcow2-bionic-debug-20190904095718.md5
   metal3_baremetal_operator:
-    ironic_api_url: "http://{{ cookiecutter.pxe.provisioning_ip }}:6385/v1/"
-    ironic_inspector_url: "http://{{ cookiecutter.pxe.provisioning_ip }}:5050/v1/"
-    deploy_kernel_url:  "http://{{ cookiecutter.pxe.provisioning_ip }}/images/ironic-python-agent.kernel"
-    deploy_ramdisk_url:  "http://{{ cookiecutter.pxe.provisioning_ip }}/images/ironic-python-agent.initramfs"
-    image: docker-prod-local.artifactory.mirantis.com/mirantis/kaas-bm/baremetal-operator:base-bionic-20190816094703
+    ironic_api_url: "http://{{ cookiecutter.nodes.master.n0.dhcp_ip }}:6385/v1/"
+    ironic_inspector_url: "http://{{ cookiecutter.nodes.master.n0.dhcp_ip }}:5050/v1/"
+    deploy_kernel_url:  "http://{{ cookiecutter.nodes.master.n0.dhcp_ip }}/images/ironic-python-agent.kernel"
+    deploy_ramdisk_url:  "http://{{ cookiecutter.nodes.master.n0.dhcp_ip }}/images/ironic-python-agent.initramfs"
+#    image: docker-prod-local.artifactory.mirantis.com/mirantis/kaas-bm/baremetal-operator:base-bionic-20190816094703
