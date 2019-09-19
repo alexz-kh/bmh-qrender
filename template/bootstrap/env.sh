@@ -31,7 +31,7 @@ function stubber(){
   for n in 0 1 2 3; do
     sudo virsh destroy worker-${n} || true
   done
-  qemu-imf create -f qcow2 /var/lib/libvirt/images/worker-0-0.qcow2 40G
+  qemu-img create -f qcow2 /var/lib/libvirt/images/worker-0-0.qcow2 40G
   set -x
   mkdir -p $BS_DIR/dev
   pushd $BS_DIR/dev/
